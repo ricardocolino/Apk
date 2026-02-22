@@ -1,0 +1,9 @@
+{
+  "name": "Web2APK Builder",
+  "description": "Transform any website into a native-feeling Android application configuration with camera, audio, and file upload support.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
