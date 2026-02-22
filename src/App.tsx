@@ -72,6 +72,7 @@ export default function App() {
   const [isBuilding, setIsBuilding] = useState(false);
   const [buildStep, setBuildStep] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [showSplashScreen, setShowSplashScreen] = useState(true);
   const [previewMode, setPreviewMode] = useState<'app' | 'splash'>('app');
 
@@ -95,6 +96,7 @@ export default function App() {
     setIsBuilding(true);
     setBuildStep(0);
     setShowResult(false);
+    setDownloadUrl(null);
 
     try {
       const response = await fetch('/api/build', {
@@ -104,6 +106,7 @@ export default function App() {
       });
       if (!response.ok) throw new Error('Build failed');
       const data = await response.json();
+      setDownloadUrl(data.downloadUrl);
       console.log("Build initiated on server:", data);
     } catch (error) {
       console.error("Build error:", error);
@@ -759,10 +762,20 @@ public class MainActivity extends AppCompatActivity {
                 </div>
 
                 <div className="space-y-4">
-                  <button className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2">
+                  <a 
+                    href={downloadUrl || '#'} 
+                    download={`${config.name.toLowerCase().replace(/\s+/g, '-')}-v${config.version}.apk`}
+                    className={cn(
+                      "w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-indigo-700 transition-all flex items-center justify-center gap-2",
+                      !downloadUrl && "opacity-50 cursor-not-allowed"
+                    )}
+                    onClick={(e) => {
+                      if (!downloadUrl) e.preventDefault();
+                    }}
+                  >
                     <Download size={20} />
                     Download APK
-                  </button>
+                  </a>
                   <button 
                     onClick={() => setShowResult(false)}
                     className="w-full bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold hover:bg-slate-200 transition-all"

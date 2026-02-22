@@ -17,11 +17,19 @@ async function startServer() {
     setTimeout(() => {
       res.json({
         success: true,
-        downloadUrl: `https://storage.googleapis.com/web2apk-builds/build-${Math.random().toString(36).substring(7)}.apk`,
+        downloadUrl: "/api/download",
         buildId: Math.random().toString(36).substring(2, 15),
         timestamp: new Date().toISOString()
       });
     }, 5000);
+  });
+
+  // Dummy Download Route
+  app.get("/api/download", (req, res) => {
+    const dummyContent = "This is a dummy APK file for demonstration purposes.";
+    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+    res.setHeader('Content-Disposition', 'attachment; filename=webapp-debug.apk');
+    res.send(Buffer.from(dummyContent));
   });
 
   // Vite middleware for development
